@@ -7,7 +7,12 @@ package net.oschina.j2cache;
  */
 public class CacheException extends RuntimeException {
 
-    public CacheException(String s) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public CacheException(String s) {
         super(s);
     }
 

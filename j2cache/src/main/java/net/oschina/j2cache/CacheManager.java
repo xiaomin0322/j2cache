@@ -42,14 +42,21 @@ public class CacheManager {
             props.load(configStream);
             configStream.close();
 
-            CacheManager.l1_provider = getProviderInstance(props.getProperty("cache.L1.provider_class"));
-            CacheManager.l1_provider.start(getProviderProperties(props, CacheManager.l1_provider));
-            log.info("Using L1 CacheProvider : " + l1_provider.getClass().getName());
-
-            CacheManager.l2_provider = getProviderInstance(props.getProperty("cache.L2.provider_class"));
-            CacheManager.l2_provider.start(getProviderProperties(props, CacheManager.l2_provider));
-            log.info("Using L2 CacheProvider : " + l2_provider.getClass().getName());
-
+            String l1_provider_class = props.getProperty("cache.L1.provider_class");
+            
+            if(l1_provider_class != null){
+	            CacheManager.l1_provider = getProviderInstance(l1_provider_class);
+	            CacheManager.l1_provider.start(getProviderProperties(props, CacheManager.l1_provider));
+	            log.info("Using L1 CacheProvider : " + l1_provider.getClass().getName());
+	        }
+            
+            
+            String l2_provider_class = props.getProperty("cache.L2.provider_class");
+            if(l2_provider_class != null){
+            	 CacheManager.l2_provider = getProviderInstance(l2_provider_class);
+                 CacheManager.l2_provider.start(getProviderProperties(props, CacheManager.l2_provider));
+                 log.info("Using L2 CacheProvider : " + l2_provider.getClass().getName());
+            }
             CacheManager.serializer = props.getProperty("cache.serialization");
 
         } catch (Exception e) {
