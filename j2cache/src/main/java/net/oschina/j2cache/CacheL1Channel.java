@@ -112,7 +112,7 @@ public class CacheL1Channel extends ReceiverAdapter implements CacheExpiredListe
                 CacheManager.set(LEVEL_1, region, key, value);
             }
         }
-        //log.info("write data to cache region="+region+",key="+key+",value="+value);
+        log.info("write data to cache region="+region+",key="+key+",value="+value);
     }
 
     /**
