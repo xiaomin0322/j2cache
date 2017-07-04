@@ -1,6 +1,11 @@
-package net.oschina.j2cache;
+package net.oschina.j2cache.l2;
 
 import java.util.List;
+
+import net.oschina.j2cache.CacheException;
+import net.oschina.j2cache.CacheExpiredListener;
+import net.oschina.j2cache.CacheManager;
+import net.oschina.j2cache.CacheObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

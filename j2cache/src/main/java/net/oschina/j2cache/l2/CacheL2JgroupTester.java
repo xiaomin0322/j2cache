@@ -1,23 +1,25 @@
 /**
  *
  */
-package net.oschina.j2cache;
+package net.oschina.j2cache.l2;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
+import net.oschina.j2cache.CacheObject;
 
 /**
  * 缓存测试入口
  *
  * @author Winter Lau
  */
-public class CacheL2Tester {
+public class CacheL2JgroupTester {
 
     public static void main(String[] args) {
 
         System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
 
-        CacheL2Channel cache = CacheL2Channel.getInstance();
+        CacheL2JgroupChannel cache = CacheL2JgroupChannel.getInstance();
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         do {

@@ -1,7 +1,12 @@
-package net.oschina.j2cache;
+package net.oschina.j2cache.l1;
 
 import java.net.URL;
 
+import net.oschina.j2cache.CacheException;
+import net.oschina.j2cache.CacheManager;
+import net.oschina.j2cache.CacheOprator;
+import net.oschina.j2cache.Command;
+import net.oschina.j2cache.l2.CacheL2JgroupChannel;
 import net.oschina.j2cache.util.CacheUtils;
 import net.oschina.j2cache.util.SerializationUtils;
 
@@ -18,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CacheL1JgroupsChannel extends CacheL1BaseChannel {
 
-    private final static Logger log = LoggerFactory.getLogger(CacheChannel.class);
+    private final static Logger log = LoggerFactory.getLogger(CacheL2JgroupChannel.class);
     private final static String CONFIG_XML = "/network.xml";
 
     private String name;
@@ -47,7 +52,7 @@ public class CacheL1JgroupsChannel extends CacheL1BaseChannel {
 
             long ct = System.currentTimeMillis();
 
-            URL xml = CacheChannel.class.getResource(CONFIG_XML);
+            URL xml = CacheL2JgroupChannel.class.getResource(CONFIG_XML);
             if (xml == null)
                 xml = getClass().getClassLoader().getParent().getResource(CONFIG_XML);
             channel = new JChannel(xml);

@@ -1,5 +1,9 @@
-package net.oschina.j2cache;
+package net.oschina.j2cache.l1;
 
+import net.oschina.j2cache.CacheException;
+import net.oschina.j2cache.CacheManager;
+import net.oschina.j2cache.CacheOprator;
+import net.oschina.j2cache.Command;
 import net.oschina.j2cache.redis.RedisCacheProvider;
 import net.oschina.j2cache.util.CacheUtils;
 import net.oschina.j2cache.util.SerializationUtils;

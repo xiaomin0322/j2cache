@@ -1,7 +1,7 @@
 package net.oschina.j2cache.util;
 
-import net.oschina.j2cache.CacheL1RedisChannel;
 import net.oschina.j2cache.Command;
+import net.oschina.j2cache.l1.CacheL1RedisChannel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

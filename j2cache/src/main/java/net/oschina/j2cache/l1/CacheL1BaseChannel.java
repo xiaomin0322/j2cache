@@ -1,6 +1,11 @@
-package net.oschina.j2cache;
+package net.oschina.j2cache.l1;
 
 import java.util.List;
+
+import net.oschina.j2cache.CacheException;
+import net.oschina.j2cache.CacheManager;
+import net.oschina.j2cache.CacheObject;
+import net.oschina.j2cache.ICacheChannel;
 
 import org.jgroups.Address;
 import org.jgroups.View;

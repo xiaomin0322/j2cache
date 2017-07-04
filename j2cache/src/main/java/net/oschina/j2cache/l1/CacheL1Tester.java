@@ -1,10 +1,13 @@
 /**
  *
  */
-package net.oschina.j2cache;
+package net.oschina.j2cache.l1;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
+import net.oschina.j2cache.CacheObject;
+import net.oschina.j2cache.ICacheChannel;
 
 /**
  * 缓存测试入口

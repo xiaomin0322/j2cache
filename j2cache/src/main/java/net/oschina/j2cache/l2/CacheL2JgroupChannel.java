@@ -1,6 +1,11 @@
-package net.oschina.j2cache;
+package net.oschina.j2cache.l2;
 
+import net.oschina.j2cache.CacheException;
+import net.oschina.j2cache.CacheExpiredListener;
+import net.oschina.j2cache.CacheManager;
+import net.oschina.j2cache.CacheObject;
 import net.oschina.j2cache.util.SerializationUtils;
+
 import org.jgroups.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +19,9 @@ import java.util.List;
  *
  * @author Winter Lau
  */
-public class CacheChannel extends ReceiverAdapter implements CacheExpiredListener {
+public class CacheL2JgroupChannel extends ReceiverAdapter implements CacheExpiredListener {
 
-    private final static Logger log = LoggerFactory.getLogger(CacheChannel.class);
+    private final static Logger log = LoggerFactory.getLogger(CacheL2JgroupChannel.class);
     private final static String CONFIG_XML = "/network.xml";
 
     private final static byte OPT_DELETE_KEY = 0x01;
@@ -27,14 +32,14 @@ public class CacheChannel extends ReceiverAdapter implements CacheExpiredListene
 
     private String name;
     private JChannel channel;
-    private final static CacheChannel instance = new CacheChannel("default");
+    private final static CacheL2JgroupChannel instance = new CacheL2JgroupChannel("default");
 
     /**
      * 单例方法
      *
      * @return
      */
-    public final static CacheChannel getInstance() {
+    public final static CacheL2JgroupChannel getInstance() {
         return instance;
     }
 
@@ -44,14 +49,14 @@ public class CacheChannel extends ReceiverAdapter implements CacheExpiredListene
      * @param name
      * @throws CacheException
      */
-    private CacheChannel(String name) throws CacheException {
+    private CacheL2JgroupChannel(String name) throws CacheException {
         this.name = name;
         try {
             CacheManager.initCacheProvider(this);
 
             long ct = System.currentTimeMillis();
 
-            URL xml = CacheChannel.class.getResource(CONFIG_XML);
+            URL xml = CacheL2JgroupChannel.class.getResource(CONFIG_XML);
             if (xml == null)
                 xml = getClass().getClassLoader().getParent().getResource(CONFIG_XML);
             channel = new JChannel(xml);
