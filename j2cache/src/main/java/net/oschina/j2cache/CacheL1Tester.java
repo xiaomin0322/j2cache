@@ -18,8 +18,8 @@ public class CacheL1Tester {
         System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
 
         ICacheChannel cache = CacheL1RedisChannel.getInstance();
+       // ICacheChannel cache = CacheL1JgroupsChannel.getInstance();
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
         do {
             try {
                 System.out.print("> ");
@@ -34,8 +34,15 @@ public class CacheL1Tester {
                     CacheObject obj = cache.get(cmds[1], cmds[2]);
                     System.out.printf("[%s,%s,L%d]=>%s\n", obj.getRegion(), obj.getKey(), obj.getLevel(), obj.getValue());
                 } else if ("set".equalsIgnoreCase(cmds[0])) {
-                    cache.set(cmds[1], cmds[2], cmds[3]);
-                    System.out.printf("[%s,%s]<=%s\n", cmds[1], cmds[2], cmds[3]);
+                	if(cmds.length == 5){
+                		cache.set(cmds[1], cmds[2], cmds[3],Boolean.valueOf(cmds[4]));
+                		 System.out.printf("[%s,%s]<=%s\n", cmds[1], cmds[2], cmds[3],cmds[4]);
+                	}else{
+                		 cache.set(cmds[1], cmds[2], cmds[3]);
+                		 System.out.printf("[%s,%s]<=%s\n", cmds[1], cmds[2], cmds[3]);
+                	}
+                   
+                   
                 } else if ("evict".equalsIgnoreCase(cmds[0])) {
                     cache.evict(cmds[1], cmds[2]);
                     System.out.printf("[%s,%s]=>null\n", cmds[1], cmds[2]);

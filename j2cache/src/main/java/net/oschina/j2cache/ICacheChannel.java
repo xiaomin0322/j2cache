@@ -8,7 +8,7 @@ import java.util.List;
  * @author zzm
  */
 @SuppressWarnings("all")
-public interface ICacheChannel {
+public interface ICacheChannel extends CacheExpiredListener{
 
     /**
      * 获取缓存中的数据
@@ -27,6 +27,16 @@ public interface ICacheChannel {
      * @param value
      */
     public void set(String region, Object key, Object value);
+    
+    /**
+     * 写入缓存
+     *
+     * @param region
+     * @param key
+     * @param value
+     */
+    public void set(String region, Object key, Object value,boolean sysCluster);
+    
     /**
      * 删除缓存
      *
@@ -66,7 +76,7 @@ public interface ICacheChannel {
      * @param key
      */
     public void _sendEvictCmd(String region, Object key);
-
+    
     /**
      * 删除一级缓存的键对应内容
      *
