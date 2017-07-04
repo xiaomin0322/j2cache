@@ -7,21 +7,21 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import net.oschina.j2cache.CacheObject;
+import net.oschina.j2cache.l1.CacheL1RedisChannel;
 
 /**
  * 缓存测试入口
  *
  * @author Winter Lau
  */
-public class CacheL2JgroupTester {
+public class CacheL2BaseChannelTester {
 
     public static void main(String[] args) {
 
         System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
 
-        CacheL2JgroupChannel cache = CacheL2JgroupChannel.getInstance();
+        CacheL2BaseChannel cache = new CacheL2BaseChannel(CacheL1RedisChannel.getInstance());
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
         do {
             try {
                 System.out.print("> ");
@@ -36,8 +36,13 @@ public class CacheL2JgroupTester {
                     CacheObject obj = cache.get(cmds[1], cmds[2]);
                     System.out.printf("[%s,%s,L%d]=>%s\n", obj.getRegion(), obj.getKey(), obj.getLevel(), obj.getValue());
                 } else if ("set".equalsIgnoreCase(cmds[0])) {
-                    cache.set(cmds[1], cmds[2], cmds[3]);
-                    System.out.printf("[%s,%s]<=%s\n", cmds[1], cmds[2], cmds[3]);
+                	if(cmds.length == 5){
+                		cache.set(cmds[1], cmds[2], cmds[3],Boolean.valueOf(cmds[4]));
+                		 System.out.printf("[%s,%s]<=%s\n", cmds[1], cmds[2], cmds[3],cmds[4]);
+                	}else{
+                		 cache.set(cmds[1], cmds[2], cmds[3]);
+                		 System.out.printf("[%s,%s]<=%s\n", cmds[1], cmds[2], cmds[3]);
+                	}
                 } else if ("evict".equalsIgnoreCase(cmds[0])) {
                     cache.evict(cmds[1], cmds[2]);
                     System.out.printf("[%s,%s]=>null\n", cmds[1], cmds[2]);
