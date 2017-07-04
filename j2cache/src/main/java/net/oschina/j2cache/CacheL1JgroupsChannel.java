@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author zzm
  */
-public class CacheL1Channel extends ReceiverAdapter implements CacheExpiredListener {
+public class CacheL1JgroupsChannel extends ReceiverAdapter implements ICacheChannel,CacheExpiredListener {
 
     private final static Logger log = LoggerFactory.getLogger(CacheChannel.class);
     private final static String CONFIG_XML = "/network.xml";
@@ -31,14 +31,14 @@ public class CacheL1Channel extends ReceiverAdapter implements CacheExpiredListe
 
     private String name;
     private JChannel channel;
-    private final static CacheL1Channel instance = new CacheL1Channel("default");
+    private final static CacheL1JgroupsChannel instance = new CacheL1JgroupsChannel("default");
 
     /**
      * 单例方法
      *
      * @return
      */
-    public final static CacheL1Channel getInstance() {
+    public final static CacheL1JgroupsChannel getInstance() {
         return instance;
     }
 
@@ -48,7 +48,7 @@ public class CacheL1Channel extends ReceiverAdapter implements CacheExpiredListe
      * @param name
      * @throws CacheException
      */
-    private CacheL1Channel(String name) throws CacheException {
+    private CacheL1JgroupsChannel(String name) throws CacheException {
         this.name = name;
         try {
             CacheManager.initCacheProvider(this);
@@ -146,7 +146,7 @@ public class CacheL1Channel extends ReceiverAdapter implements CacheExpiredListe
         _sendClearCmd(region);
     }
 
-    private void _sendClearCmd(String region) {
+    public void _sendClearCmd(String region) {
         // 发送广播
         Command cmd = new Command(OPT_CLEAR_KEY, region, "");
         try {
@@ -178,7 +178,7 @@ public class CacheL1Channel extends ReceiverAdapter implements CacheExpiredListe
      * @param region
      * @param key
      */
-    private void _sendEvictCmd(String region, Object key) {
+    public void _sendEvictCmd(String region, Object key) {
         //发送广播
         Command cmd = new Command(OPT_DELETE_KEY, region, key);
         try {
@@ -196,7 +196,7 @@ public class CacheL1Channel extends ReceiverAdapter implements CacheExpiredListe
      * @param key
      */
     @SuppressWarnings("rawtypes")
-    protected void onDeleteCacheKey(String region, Object key) {
+    public void onDeleteCacheKey(String region, Object key) {
         if (key instanceof List)
             CacheManager.batchEvict(LEVEL_1, region, (List) key);
         else
@@ -241,7 +241,7 @@ public class CacheL1Channel extends ReceiverAdapter implements CacheExpiredListe
         }
     }
 
-    private void onClearCache(String region) {
+    public void onClearCache(String region) {
         CacheManager.clear(LEVEL_1, region);
     }
 

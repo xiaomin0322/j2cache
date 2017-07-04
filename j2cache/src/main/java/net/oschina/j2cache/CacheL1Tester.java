@@ -17,7 +17,7 @@ public class CacheL1Tester {
 
         System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
 
-        CacheL1Channel cache = CacheL1Channel.getInstance();
+        ICacheChannel cache = CacheL1RedisChannel.getInstance();
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         do {
