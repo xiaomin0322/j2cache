@@ -24,7 +24,7 @@ public class CacheL1RedisChannel implements ICacheChannel,CacheExpiredListener {
 
     private String name;
     
-    public String channel = "cmallRedisCacheChannel";
+    public String channel = "CacheL1RedisChannel";
     
     public byte[] channelByte = null;
 
@@ -163,14 +163,16 @@ public class CacheL1RedisChannel implements ICacheChannel,CacheExpiredListener {
     }
     
     public void _sendClearCmd(String region) {
-        // 发送广播
-        Command cmd = new Command(CacheOprator.REMOVE_ALL, region, "");
+        
+        Jedis cache = RedisCacheProvider.getResource();
         try {
-        	 Jedis cache = RedisCacheProvider.getResource();
-        	  cache.publish(channelByte, SerializationUtils.serialize(cmd));
-        	 RedisCacheProvider.returnResource(cache, false);
+        	// 发送广播
+            Command cmd = new Command(CacheOprator.REMOVE_ALL, region, "");
+        	cache.publish(channelByte, SerializationUtils.serialize(cmd));
         } catch (Exception e) {
             log.error("Unable to clear cache,region=" + region, e);
+        }finally{
+        	RedisCacheProvider.returnResource(cache, false);
         }
     }
 
@@ -181,14 +183,15 @@ public class CacheL1RedisChannel implements ICacheChannel,CacheExpiredListener {
      * @param key
      */
     public void _sendEvictCmd(String region, Object key) {
-        //发送广播
-        Command cmd = new Command(CacheOprator.REMOVE, region, key);
+    	Jedis cache = RedisCacheProvider.getResource();
         try {
-        	 Jedis cache = RedisCacheProvider.getResource();
+             //发送广播
+             Command cmd = new Command(CacheOprator.REMOVE, region, key);
         	 cache.publish(channelByte, SerializationUtils.serialize(cmd));
-        	 RedisCacheProvider.returnResource(cache, false);
         } catch (Exception e) {
             log.error("Unable to delete cache,region=" + region + ",key=" + key, e);
+        }finally{
+        	RedisCacheProvider.returnResource(cache, false);
         }
     }
 
@@ -244,8 +247,7 @@ public class CacheL1RedisChannel implements ICacheChannel,CacheExpiredListener {
 		        	  return;
 		        }
 		        CacheL1RedisChannel cacheL1RedisChannel = CacheL1RedisChannel.getInstance();
-		        System.out.println("channel="+SerializationUtils.deserialize(channel)+" message="+cmd);
-		        
+		        log.debug("channel="+SerializationUtils.deserialize(channel)+" message="+cmd);
 		        switch (cmd.getOperator()) {
 		                case REMOVE:
 		                	cacheL1RedisChannel.onDeleteCacheKey(cmd.getRegion(), cmd.getKey());
