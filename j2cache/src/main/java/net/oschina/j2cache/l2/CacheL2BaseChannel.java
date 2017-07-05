@@ -142,7 +142,9 @@ public class CacheL2BaseChannel implements ICacheChannel{
 	public void set(String region, Object key, Object value, boolean sysCluster) {
 		 getCacheL1Channel().set(region, key, value, sysCluster);
 		 CacheManager.set(LEVEL_2, region, key, value);
-		 _sendEvictCmd(region, key);
+		 if(!sysCluster){
+			 _sendEvictCmd(region, key);
+		 }
 	     log.info("write data to cache region="+region+",key="+key+",value="+value);
 	}
 
