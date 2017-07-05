@@ -24,6 +24,17 @@ public class CacheL2BaseChannel implements ICacheChannel{
     public final static byte LEVEL_2 = 2;
     public final static byte LEVEL_1 = 1;
 
+    private final static CacheL2BaseChannel instance = new CacheL2BaseChannel();
+    
+    /**
+     * 单例方法
+     *
+     * @return
+     */
+    public final static CacheL2BaseChannel getInstance() {
+        return instance;
+    }
+
     
     private CacheL1BaseChannel cacheL1Channel;
     
@@ -31,18 +42,9 @@ public class CacheL2BaseChannel implements ICacheChannel{
     	return cacheL1Channel;
     }
     
-    public void setCacheL1Channel(CacheL1BaseChannel cacheL1Channel){
+    public CacheL2BaseChannel setCacheL1Channel(CacheL1BaseChannel cacheL1Channel){
     	this.cacheL1Channel=cacheL1Channel;
-    }
-
-    /**
-     * 初始化缓存通道并连接
-     *
-     * @param name
-     * @throws CacheException
-     */
-    public CacheL2BaseChannel(CacheL1BaseChannel cacheL1Channel) throws CacheException {
-    	this.cacheL1Channel=cacheL1Channel;
+    	return this;
     }
 
     /**

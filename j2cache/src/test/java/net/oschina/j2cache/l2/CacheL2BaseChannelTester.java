@@ -7,7 +7,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import net.oschina.j2cache.CacheObject;
-import net.oschina.j2cache.l1.CacheL1RedisChannel;
+import net.oschina.j2cache.ICacheChannel;
+import net.oschina.j2cache.factory.CacheFactory;
 
 /**
  * 缓存测试入口
@@ -20,7 +21,8 @@ public class CacheL2BaseChannelTester {
 
         System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
 
-        CacheL2BaseChannel cache = new CacheL2BaseChannel(CacheL1RedisChannel.getInstance());
+        ICacheChannel cache = CacheFactory.getCacheL1JgroupsAndL2Redis();
+        
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         do {
             try {
