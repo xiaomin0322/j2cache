@@ -1,7 +1,7 @@
 /**
  *
  */
-package net.oschina.j2cache.l2;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -1,11 +1,13 @@
 package net.oschina.j2cache.l2;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import net.oschina.j2cache.CacheException;
 import net.oschina.j2cache.CacheExpiredListener;
 import net.oschina.j2cache.CacheManager;
 import net.oschina.j2cache.CacheObject;
+import net.oschina.j2cache.ICacheChannel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author zzm
  */
-public class CacheL2Channel implements CacheExpiredListener {
+public class CacheL2Channel implements ICacheChannel,CacheExpiredListener {
 
 	private final static Logger log = LoggerFactory
 			.getLogger(CacheL2Channel.class);
@@ -140,5 +142,41 @@ public class CacheL2Channel implements CacheExpiredListener {
 	 */
 	public void close() {
 		CacheManager.shutdown(LEVEL_2);
+	}
+
+	@Override
+	public CacheObject get(String region, Object key, Callable<?> callable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void set(String region, Object key, Object value, boolean sysCluster) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void _sendClearCmd(String region) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void _sendEvictCmd(String region, Object key) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDeleteCacheKey(String region, Object key) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClearCache(String region) {
+		// TODO Auto-generated method stub
+		
 	}
 }

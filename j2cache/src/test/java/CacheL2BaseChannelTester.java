@@ -1,7 +1,7 @@
 /**
  *
  */
-package net.oschina.j2cache.l1;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,14 +15,14 @@ import net.oschina.j2cache.factory.CacheFactory;
  *
  * @author Winter Lau
  */
-public class CacheL1Tester {
+public class CacheL2BaseChannelTester {
 
     public static void main(String[] args) {
 
         System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
 
-        ICacheChannel cache = CacheFactory.getCacheL1RedisChannel();
-       // ICacheChannel cache = CacheL1JgroupsChannel.getInstance();
+        ICacheChannel cache = CacheFactory.getCacheL1JgroupsAndL2Redis();
+        
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         do {
             try {
@@ -45,8 +45,6 @@ public class CacheL1Tester {
                 		 cache.set(cmds[1], cmds[2], cmds[3]);
                 		 System.out.printf("[%s,%s]<=%s\n", cmds[1], cmds[2], cmds[3]);
                 	}
-                   
-                   
                 } else if ("evict".equalsIgnoreCase(cmds[0])) {
                     cache.evict(cmds[1], cmds[2]);
                     System.out.printf("[%s,%s]=>null\n", cmds[1], cmds[2]);
