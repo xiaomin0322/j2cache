@@ -21,7 +21,8 @@ public class CacheL2BaseChannelTester {
 
         System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
 
-        ICacheChannel cache = CacheFactory.getCacheL1JgroupsAndL2Redis();
+        //ICacheChannel cache = CacheFactory.getCacheL1JgroupsAndL2Redis();
+        ICacheChannel cache = CacheFactory.getCacheL1ReidsAndL2Redis();
         
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         do {
