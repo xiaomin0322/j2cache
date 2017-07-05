@@ -46,7 +46,7 @@ public class EhCacheProvider implements CacheProvider {
 
     @Override
     public String name() {
-        return "ehcache";
+        return "cache.ehcache";
     }
 
     /***
