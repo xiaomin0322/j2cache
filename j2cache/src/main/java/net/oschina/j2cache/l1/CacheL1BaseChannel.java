@@ -23,6 +23,7 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     private final static Logger log = LoggerFactory.getLogger(CacheL1BaseChannel.class);
 
     public final static byte LEVEL_1 = 1;
+    public final static String NULL = "NULL";
     
    
     /**
@@ -66,6 +67,7 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     				log.info("get callable region="+region+",key="+key);
     				//System.out.println("get callable region="+region+",key="+key);
     				Object callObj = callable.call();
+    				callObj = callObj == null ? NULL : callObj;
     				cacheObject.setValue(callObj);
     				set(region, key, callObj);
     				//处理缓存穿透  额外对空置设置过期时间
@@ -73,6 +75,7 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     					CacheManager.expire(LEVEL_1, region, key, 60);
     					log.info("write data to cache region="+region+",key="+key+",value is null expire 60s");
     				}
+    				
 				}
 			} catch (Exception e) {
 				throw new CacheException(e);
