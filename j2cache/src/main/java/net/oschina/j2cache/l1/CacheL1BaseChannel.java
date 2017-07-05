@@ -63,15 +63,15 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     				if(cacheObject.getValue() != null){
     					return cacheObject;
     				}
+    				log.info("get callable region="+region+",key="+key);
+    				//System.out.println("get callable region="+region+",key="+key);
     				Object callObj = callable.call();
-    				if(callObj!=null){
-    					cacheObject.setValue(callObj);
-    					set(region, key, callObj);
+    				cacheObject.setValue(callObj);
+    				set(region, key, callObj);
     				//处理缓存穿透  额外对空置设置过期时间
-    				}else{
-    					cacheObject.setValue(callObj);
-    					set(region, key, callObj);
+    				if(callObj==null){
     					CacheManager.expire(LEVEL_1, region, key, 60);
+    					log.info("write data to cache region="+region+",key="+key+",value is null expire 60s");
     				}
 				}
 			} catch (Exception e) {
