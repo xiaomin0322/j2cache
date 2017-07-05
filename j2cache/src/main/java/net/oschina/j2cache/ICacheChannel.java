@@ -1,6 +1,7 @@
 package net.oschina.j2cache;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * 缓存多播通道
@@ -18,6 +19,17 @@ public interface ICacheChannel extends CacheExpiredListener{
      * @return
      */
     public CacheObject get(String region, Object key);
+    
+    /**
+     * 获取缓存中的数据
+     *
+     * @param region
+     * @param key
+     * @param callable
+     * @return
+     */
+    public CacheObject get(String region, Object key,Callable<?> callable);
+    
 
     /**
      * 写入缓存

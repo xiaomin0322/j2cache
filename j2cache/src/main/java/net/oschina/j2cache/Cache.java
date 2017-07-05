@@ -45,6 +45,13 @@ public interface Cache {
      * Remove an item from the cache
      */
     public void evict(Object key) throws CacheException;
+    
+    /**
+     * expire 过期时间
+     * @param key
+     * @param seconds
+     */
+    public void expire(Object key,int seconds);
 
     /**
      * Batch remove cache objects

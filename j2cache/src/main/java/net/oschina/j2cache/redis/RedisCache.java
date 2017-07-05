@@ -3,8 +3,10 @@ package net.oschina.j2cache.redis;
 import net.oschina.j2cache.Cache;
 import net.oschina.j2cache.CacheException;
 import net.oschina.j2cache.util.SerializationUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
@@ -175,4 +177,19 @@ public class RedisCache implements Cache {
     public void destroy() throws CacheException {
         this.clear();
     }
+
+	@Override
+	public void expire(Object key, int seconds) {
+	        Jedis cache = RedisCacheProvider.getResource();
+	        try {
+	            if (null == key)
+	                return ;
+	            
+	             cache.expire(getKeyName(key).getBytes(), seconds);
+	        } catch (Exception e) {
+	            log.error("Error occured when get data from L2 cache", e);
+	        } finally {
+	            RedisCacheProvider.returnResource(cache, false);
+	        }
+	}
 }

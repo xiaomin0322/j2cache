@@ -200,5 +200,19 @@ public class CacheManager {
         Cache cache = _GetCache(level, name, false);
         return (cache != null) ? cache.keys() : null;
     }
+    
+    /**
+     * Clear the cache
+     */
+    public final static void expire(int level, String name, Object key,int seconds) throws CacheException {
+    	 if (name != null && key != null) {
+             Cache cache = _GetCache(level, name, false);
+             if (cache != null){
+            	 cache.expire(key, seconds);
+             }
+                 
+         }
+    }
+
 
 }

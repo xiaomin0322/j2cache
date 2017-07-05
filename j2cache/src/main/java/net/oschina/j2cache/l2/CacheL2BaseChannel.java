@@ -1,6 +1,7 @@
 package net.oschina.j2cache.l2;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import net.oschina.j2cache.CacheException;
 import net.oschina.j2cache.CacheManager;
@@ -68,6 +69,19 @@ public class CacheL2BaseChannel implements ICacheChannel{
         }
         return obj;
     }
+    
+    @Override
+	public CacheObject get(String region, Object key, Callable<?> callable) {
+    	CacheObject cacheObject = get(region, key);
+    	if(cacheObject.getValue() == null){
+    		cacheObject = getCacheL1Channel().get(region, key, callable);
+    		if(cacheObject.getValue() == null){
+    			 CacheManager.set(LEVEL_2, region, key, cacheObject.getValue());
+    		}
+    	}
+		return cacheObject;
+	}
+    
 
     /**
      * 写入缓存
@@ -174,6 +188,8 @@ public class CacheL2BaseChannel implements ICacheChannel{
 	public void onClearCache(String region) {
 		getCacheL1Channel().onClearCache(region);
 	}
+
+	
 
 
 }

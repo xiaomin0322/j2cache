@@ -201,4 +201,21 @@ public class EhCache implements Cache, CacheEventListener {
     public void notifyRemoveAll(Ehcache arg0) {
     }
 
+	@Override
+	public void expire(Object key, int seconds) {
+		 try {
+	            if (key == null)
+	                return ;
+	            else {
+	                Element element = cache.get(key);
+	                if (element != null)
+	                     element.setTimeToLive(seconds);
+	                     element.setTimeToIdle(seconds);
+	            }
+	        } catch (net.sf.ehcache.CacheException e) {
+	            throw new CacheException(e);
+	        }
+		
+	}
+
 }

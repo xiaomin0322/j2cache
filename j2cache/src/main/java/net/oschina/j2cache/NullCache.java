@@ -69,4 +69,10 @@ public class NullCache implements Cache {
     public void destroy() throws CacheException {
     }
 
+	@Override
+	public void expire(Object key, int seconds) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

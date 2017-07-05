@@ -1,6 +1,7 @@
 package net.oschina.j2cache.l1;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import net.oschina.j2cache.CacheException;
 import net.oschina.j2cache.CacheManager;
@@ -36,13 +37,51 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
         obj.setRegion(region);
         obj.setKey(key);
         if (region != null && key != null) {
+        	obj.setLevel(LEVEL_1);
             obj.setValue(CacheManager.get(LEVEL_1, region, key));
-            if (obj.getValue() == null) {
-            } else
-                obj.setLevel(LEVEL_1);
         }
         return obj;
     }
+    
+    /**
+     * 获取缓存中的数据
+     *
+     * @param region
+     * @param key
+     * @param callable
+     * @return
+     */
+    public CacheObject get(String region, Object key,Callable<?> callable){
+    	CacheObject cacheObject = get(region, key);
+    	if(cacheObject.getValue() == null){
+    		String lockStr = (region+"_"+key).intern();
+    		try {
+    			//处理热点key，缓存雪崩
+    			synchronized (lockStr) {
+    				//再次检测
+    				cacheObject = get(region, key);
+    				if(cacheObject.getValue() != null){
+    					return cacheObject;
+    				}
+    				Object callObj = callable.call();
+    				if(callObj!=null){
+    					cacheObject.setValue(callObj);
+    					set(region, key, callObj);
+    				//处理缓存穿透  额外对空置设置过期时间
+    				}else{
+    					cacheObject.setValue(callObj);
+    					set(region, key, callObj);
+    					CacheManager.expire(LEVEL_1, region, key, 60);
+    				}
+				}
+			} catch (Exception e) {
+				throw new CacheException(e);
+			}
+    	}
+    	return cacheObject;
+    }
+    
+    
 
     /**
      * 写入缓存
