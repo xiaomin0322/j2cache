@@ -10,7 +10,7 @@ public class ConfigUtils {
 
 	public static URL getURL(String remoteConfigPath,String localConfigPath){
 		URL xml  = null;
-		 if(remoteConfigPath != null){
+		 if(remoteConfigPath != null || "".equals(remoteConfigPath)){
 	        	try {
 	        		if(remoteConfigPath.startsWith("http")){
 	        			xml = new URL(remoteConfigPath);

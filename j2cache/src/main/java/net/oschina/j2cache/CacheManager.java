@@ -2,6 +2,8 @@ package net.oschina.j2cache;
 
 import net.oschina.j2cache.ehcache.EhCacheProvider;
 import net.oschina.j2cache.redis.RedisCacheProvider;
+import net.oschina.j2cache.util.ConfigUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,17 +36,10 @@ public class CacheManager {
     }
 
     public static void initCacheProvider(CacheExpiredListener listener) {
-
-        InputStream configStream = CacheManager.class.getClassLoader().getParent().getResourceAsStream(CONFIG_FILE);
-        if (configStream == null)
-            configStream = CacheManager.class.getResourceAsStream(CONFIG_FILE);
-        if (configStream == null)
-            throw new CacheException("Cannot find " + CONFIG_FILE + " !!!");
-
-        props = new Properties();
-
         CacheManager.listener = listener;
         try {
+        	InputStream configStream = ConfigUtils.getURL("", CONFIG_FILE).openStream();
+            props = new Properties();
             props.load(configStream);
             configStream.close();
 
