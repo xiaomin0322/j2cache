@@ -56,12 +56,12 @@ public class CacheL2BaseChannel implements ICacheChannel{
         obj.setRegion(region);
         obj.setKey(key);
         if (region != null && key != null) {
-            obj.setValue(getCacheL1Channel().get(region, key));
+            obj.setValue(getCacheL1Channel().get(region, key).getValue());
             if (obj.getValue() == null) {
                 obj.setValue(CacheManager.get(LEVEL_2, region, key));
                 if (obj.getValue() != null) {
                     obj.setLevel(LEVEL_2);
-                    CacheManager.set(LEVEL_1, region, key, obj.getValue());
+                    getCacheL1Channel().set(region, key, obj.getValue());
                 }
             } else
                 obj.setLevel(LEVEL_1);
