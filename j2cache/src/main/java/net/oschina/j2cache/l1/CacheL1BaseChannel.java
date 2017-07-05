@@ -38,8 +38,10 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
         obj.setRegion(region);
         obj.setKey(key);
         if (region != null && key != null) {
-        	obj.setLevel(LEVEL_1);
             obj.setValue(CacheManager.get(LEVEL_1, region, key));
+            if(obj.getValue()!=null){
+            	obj.setLevel(LEVEL_1);
+            }
         }
         return obj;
     }
