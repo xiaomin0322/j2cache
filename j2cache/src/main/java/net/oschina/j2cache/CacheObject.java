@@ -44,4 +44,9 @@ public class CacheObject {
         this.level = level;
     }
 
+	@Override
+	public String toString() {
+		return "CacheObject [region=" + region + ", key=" + key + ", value="
+				+ value + ", level=" + level + "]";
+	}
 }

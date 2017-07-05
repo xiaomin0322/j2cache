@@ -6,6 +6,7 @@ import net.oschina.j2cache.CacheException;
 import net.oschina.j2cache.CacheManager;
 import net.oschina.j2cache.CacheObject;
 import net.oschina.j2cache.ICacheChannel;
+import net.oschina.j2cache.l1.CacheL1BaseChannel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,13 @@ public class CacheL2BaseChannel implements ICacheChannel{
     public final static byte LEVEL_1 = 1;
 
     
-    private ICacheChannel cacheL1Channel;
+    private CacheL1BaseChannel cacheL1Channel;
     
-    public ICacheChannel getCacheL1Channel(){
+    public CacheL1BaseChannel getCacheL1Channel(){
     	return cacheL1Channel;
     }
     
-    public void setCacheL1Channel(ICacheChannel cacheL1Channel){
+    public void setCacheL1Channel(CacheL1BaseChannel cacheL1Channel){
     	this.cacheL1Channel=cacheL1Channel;
     }
 
@@ -39,7 +40,7 @@ public class CacheL2BaseChannel implements ICacheChannel{
      * @param name
      * @throws CacheException
      */
-    public CacheL2BaseChannel(ICacheChannel cacheL1Channel) throws CacheException {
+    public CacheL2BaseChannel(CacheL1BaseChannel cacheL1Channel) throws CacheException {
     	this.cacheL1Channel=cacheL1Channel;
     }
 
@@ -76,9 +77,7 @@ public class CacheL2BaseChannel implements ICacheChannel{
      * @param value
      */
     public void set(String region, Object key, Object value) {
-    	getCacheL1Channel().set(region, key, value);
-        CacheManager.set(LEVEL_2, region, key, value);
-        log.info("write data to cache region="+region+",key="+key+",value="+value);
+    	set(region, key, value, false);
     }
 
     /**
@@ -88,9 +87,8 @@ public class CacheL2BaseChannel implements ICacheChannel{
      * @param key
      */
     public void evict(String region, Object key) {
-        CacheManager.evict(LEVEL_1, region, key); //删除一级缓存
+    	getCacheL1Channel().evict(region, key); //删除一级缓存
         CacheManager.evict(LEVEL_2, region, key); //删除二级缓存
-        getCacheL1Channel()._sendEvictCmd(region, key); //发送广播
     }
 
     /**
@@ -101,18 +99,16 @@ public class CacheL2BaseChannel implements ICacheChannel{
      */
     @SuppressWarnings({"rawtypes"})
     public void batchEvict(String region, List keys) {
-        CacheManager.batchEvict(LEVEL_1, region, keys);
+    	getCacheL1Channel().batchEvict(region, keys);
         CacheManager.batchEvict(LEVEL_2, region, keys);
-        getCacheL1Channel()._sendEvictCmd(region, keys);
     }
 
     /**
      * Clear the cache
      */
     public void clear(String region) throws CacheException {
-        CacheManager.clear(LEVEL_1, region);
+    	getCacheL1Channel().clear(region);
         CacheManager.clear(LEVEL_2, region);
-        getCacheL1Channel()._sendClearCmd(region);
     }
 
 
@@ -130,7 +126,7 @@ public class CacheL2BaseChannel implements ICacheChannel{
         else
             CacheManager.evict(LEVEL_2, region, key);
         //发送广播
-        getCacheL1Channel()._sendEvictCmd(region, key);
+        _sendEvictCmd(region, key);
     }
 
 
@@ -138,7 +134,7 @@ public class CacheL2BaseChannel implements ICacheChannel{
      * 关闭到通道的连接
      */
     public void close() {
-        CacheManager.shutdown(LEVEL_1);
+    	getCacheL1Channel().close();
         CacheManager.shutdown(LEVEL_2);
     }
 
@@ -146,6 +142,7 @@ public class CacheL2BaseChannel implements ICacheChannel{
 	public void set(String region, Object key, Object value, boolean sysCluster) {
 		 getCacheL1Channel().set(region, key, value, sysCluster);
 		 CacheManager.set(LEVEL_2, region, key, value);
+		 _sendEvictCmd(region, key);
 	     log.info("write data to cache region="+region+",key="+key+",value="+value);
 	}
 
