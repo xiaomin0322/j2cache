@@ -38,7 +38,7 @@ public class CacheManager {
     public static void initCacheProvider(CacheExpiredListener listener) {
         CacheManager.listener = listener;
         try {
-        	InputStream configStream = ConfigUtils.getURL("", CONFIG_FILE).openStream();
+        	InputStream configStream = ConfigUtils.getInputStream("", CONFIG_FILE);
             props = new Properties();
             props.load(configStream);
             configStream.close();
