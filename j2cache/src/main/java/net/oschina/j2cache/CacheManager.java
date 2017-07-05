@@ -20,7 +20,7 @@ import java.util.Properties;
 public class CacheManager {
 
     private final static Logger log = LoggerFactory.getLogger(CacheManager.class);
-    private final static String CONFIG_FILE = "/j2cache.properties";
+    private final static String CONFIG_FILE = "j2cache.properties";
 
     private static CacheProvider l1_provider;
     private static CacheProvider l2_provider;

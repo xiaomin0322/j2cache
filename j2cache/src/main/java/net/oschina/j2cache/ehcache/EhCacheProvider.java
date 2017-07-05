@@ -16,7 +16,6 @@
  */
 package net.oschina.j2cache.ehcache;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class EhCacheProvider implements CacheProvider {
 
     private final static Logger log = LoggerFactory.getLogger(EhCacheProvider.class);
-    private final static String CONFIG_XML = "/ehcache.xml";
+    private final static String CONFIG_XML = "ehcache.xml";
 
     private CacheManager manager;
     private ConcurrentHashMap<String, EhCache> _CacheManager;

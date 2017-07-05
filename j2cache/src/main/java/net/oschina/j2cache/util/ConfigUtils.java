@@ -24,7 +24,7 @@ public class ConfigUtils {
 		} else {
 			xml = Thread.currentThread().getContextClassLoader().getResource(localConfigPath);
 			if (xml == null)
-				throw new CacheException("cannot find ehcache.xml !!!");
+				throw new CacheException("cannot find ehcache.xml !!! "+localConfigPath);
 		}
 		return xml;
 	}

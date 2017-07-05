@@ -27,7 +27,7 @@ public class RedisCacheProvider implements CacheProvider {
 
     @Override
     public String name() {
-        return "redis";
+        return "cache.redis";
     }
 
     /**
