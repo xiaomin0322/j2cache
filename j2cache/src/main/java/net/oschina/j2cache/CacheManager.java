@@ -26,6 +26,12 @@ public class CacheManager {
     private static CacheExpiredListener listener;
 
     private static String serializer;
+    
+    private static Properties props;
+    
+    public static Properties getProperties(){
+    	return props;
+    }
 
     public static void initCacheProvider(CacheExpiredListener listener) {
 
@@ -35,7 +41,7 @@ public class CacheManager {
         if (configStream == null)
             throw new CacheException("Cannot find " + CONFIG_FILE + " !!!");
 
-        Properties props = new Properties();
+        props = new Properties();
 
         CacheManager.listener = listener;
         try {

@@ -8,6 +8,7 @@ import net.oschina.j2cache.CacheOprator;
 import net.oschina.j2cache.Command;
 import net.oschina.j2cache.l2.CacheL2BaseChannel;
 import net.oschina.j2cache.util.CacheUtils;
+import net.oschina.j2cache.util.ConfigUtils;
 import net.oschina.j2cache.util.SerializationUtils;
 
 import org.jgroups.JChannel;
@@ -51,10 +52,9 @@ public class CacheL1JgroupsChannel extends CacheL1BaseChannel {
             CacheManager.initCacheProvider(this);
 
             long ct = System.currentTimeMillis();
-
-            URL xml = CacheL2BaseChannel.class.getResource(CONFIG_XML);
-            if (xml == null)
-                xml = getClass().getClassLoader().getParent().getResource(CONFIG_XML);
+            String configPath = CacheManager.getProperties().getProperty("cache.L1.provider.jgroup.config");
+            URL xml  = ConfigUtils.getURL(configPath,CONFIG_XML);
+            
             channel = new JChannel(xml);
             channel.setReceiver(new JgroupsMQBinaryHandler());
             channel.connect(this.name);

@@ -1,5 +1,7 @@
 package net.oschina.j2cache.redis;
 
+import java.util.Properties;
+
 import net.oschina.j2cache.Cache;
 import net.oschina.j2cache.CacheException;
 import net.oschina.j2cache.CacheExpiredListener;
@@ -7,8 +9,6 @@ import net.oschina.j2cache.CacheProvider;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-
-import java.util.Properties;
 
 /**
  * Redis 缓存实现

@@ -16,16 +16,19 @@
  */
 package net.oschina.j2cache.ehcache;
 
-import net.oschina.j2cache.CacheException;
-import net.oschina.j2cache.CacheExpiredListener;
-import net.oschina.j2cache.CacheProvider;
-import net.sf.ehcache.CacheManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+
+import net.oschina.j2cache.CacheException;
+import net.oschina.j2cache.CacheExpiredListener;
+import net.oschina.j2cache.CacheProvider;
+import net.oschina.j2cache.util.ConfigUtils;
+import net.sf.ehcache.CacheManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Cache Provider plugin
@@ -98,13 +101,9 @@ public class EhCacheProvider implements CacheProvider {
                     " If this behaviour is required, consider using net.sf.ehcache.hibernate.SingletonEhCacheProvider.");
             return;
         }
-        URL xml = getClass().getClassLoader().getParent().getResource(CONFIG_XML);
-        if (xml == null)
-            xml = getClass().getResource(CONFIG_XML);
-        if (xml == null)
-            throw new CacheException("cannot find ehcache.xml !!!");
-
-        manager = CacheManager.getInstance();
+        String configPath  = props.getProperty("cache.L1.provider.ehcache.config");
+        URL xml  = ConfigUtils.getURL(configPath,CONFIG_XML);
+        manager = CacheManager.create(xml);
         _CacheManager = new ConcurrentHashMap<String, EhCache>();
     }
 
@@ -118,5 +117,11 @@ public class EhCacheProvider implements CacheProvider {
             manager = null;
         }
     }
+    
+    public static void main(String[] args)throws Exception {
+    	URL xml =new URL("file","","D:\\workspace\\j2cache\\j2cache\\src\\main\\resources\\ehcache.xml");
+    	xml = new URL("http://michael-paul.iteye.com/blog/1387806");
+    	System.out.println(xml.openStream());
+	}
 
 }
