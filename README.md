@@ -32,3 +32,6 @@ j2cache
  缓存同步增加redis subscribe
  
  解决热点key，缓存雪崩,缓存穿透问题
+
+ 增加 支持 spring 整合
+ 
