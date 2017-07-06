@@ -22,7 +22,7 @@ public class CacheL1Test {
 		for (int i = 0; i < 50; i++) {
 			new Thread() {
 				public void run() {
-					CacheObject obj = cache.get("zzm", "test",
+					CacheObject obj = cache.get("user", "test",
 							new Callable<String>() {
 								@Override
 								public String call() throws Exception {
@@ -35,7 +35,7 @@ public class CacheL1Test {
 		}
 		
 		Thread.sleep(30000);
-		CacheObject obj = cache.get("zzm", "test",
+		CacheObject obj = cache.get("user", "test",
 				new Callable<String>() {
 					@Override
 					public String call() throws Exception {
@@ -62,7 +62,7 @@ public class CacheL1Test {
 		for (int i = 0; i < 50; i++) {
 			new Thread() {
 				public void run() {
-					Object obj = cache.get("zzm", "test",
+					Object obj = cache.get("user", "test",
 							new Callable<String>() {
 								@Override
 								public String call() throws Exception {
