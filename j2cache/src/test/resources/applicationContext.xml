@@ -25,8 +25,6 @@
 		<property name="locations">
 			<list>
 				<value>classpath:j2cache.properties</value>
-				<!-- <value>http://prop_server.cmall.com/online/merchantSupportSite/log4j.properties</value>
-				<value>http://prop_server.cmall.com/online/merchantSupportSite/redis-cluster.properties</value> -->
 			</list>
 		</property>
 	</bean>
