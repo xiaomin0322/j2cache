@@ -35,3 +35,5 @@ j2cache
 
  增加 支持 spring 整合
  
+ 支持redis 2 redis 3
+ 
