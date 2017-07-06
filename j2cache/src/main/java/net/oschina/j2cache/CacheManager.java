@@ -92,6 +92,9 @@ public class CacheManager {
             String key = (String) keys.nextElement();
             if (key.startsWith(prefix))
                 new_props.setProperty(key.substring(prefix.length()), props.getProperty(key));
+            else{
+            	new_props.put(key, props.getProperty(key));
+            }
         }
         return new_props;
     }
