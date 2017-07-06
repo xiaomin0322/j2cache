@@ -50,11 +50,11 @@ public class CacheL1RedisChannel extends CacheL1BaseChannel {
         try {
         	 long ct = System.currentTimeMillis();
         	 
-             CacheManager.initCacheProvider(this);
-           
-            String channelStr = SpringProperty.getProperty("");
+            CacheManager.initCacheProvider(this);
+            String channelKey = "cache.L1.provider.redis.subscribe.keys";
+            String channelStr = SpringProperty.getProperty(channelKey);
             if(StringUtils.isEmpty(channelStr)){
-            	channelStr = CacheManager.getProperties().getProperty("");
+            	channelStr = CacheManager.getProperties().getProperty(channelKey);
             }
             log.info("redis subscribe : {}",channelStr);
             for(final String key:channelStr.split(",")){
