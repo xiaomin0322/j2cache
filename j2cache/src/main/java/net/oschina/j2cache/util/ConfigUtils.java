@@ -13,7 +13,7 @@ import net.oschina.j2cache.ehcache.EhCacheProvider;
 public class ConfigUtils {
 	 private final static Logger log = LoggerFactory.getLogger(ConfigUtils.class);
 	public static URL getURL(String remoteConfigPath, String localConfigPath) {
-		log.info("ConfigUtils.getURL remoteConfigPath >>>>>> {} localConfigPath >>>>> {}",localConfigPath);
+		log.info("ConfigUtils.getURL remoteConfigPath >>>>>> {} localConfigPath >>>>> {}",remoteConfigPath,localConfigPath);
 		URL xml = null;
 		if (remoteConfigPath != null && !"".equals(remoteConfigPath)) {
 			try {
