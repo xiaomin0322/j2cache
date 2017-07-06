@@ -3,6 +3,7 @@ package net.oschina.j2cache;
 import net.oschina.j2cache.ehcache.EhCacheProvider;
 import net.oschina.j2cache.redis.RedisCacheProvider;
 import net.oschina.j2cache.util.ConfigUtils;
+import net.oschina.j2cache.util.SpringProperty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import java.util.Properties;
 /**
  * 缓存管理器
  *
- * @author liudong
+ * @author zzm
  */
 public class CacheManager {
 
@@ -38,13 +39,17 @@ public class CacheManager {
     public static void initCacheProvider(CacheExpiredListener listener) {
         CacheManager.listener = listener;
         try {
-        	InputStream configStream = ConfigUtils.getInputStream("", CONFIG_FILE);
-            props = new Properties();
-            props.load(configStream);
-            configStream.close();
-
+        	props = SpringProperty.getProps();
+        	if(props==null){
+        		log.info("SpringProperty.getProps() is null load local config >>>>>>>>>>>>>>>>>>>>>>>");
+        		InputStream configStream = ConfigUtils.getInputStream("", CONFIG_FILE);
+                props = new Properties();
+                props.load(configStream);
+                configStream.close();
+        	}else{
+        		log.info("load SpringProperty config >>>>>>>>>>>>>>>>>>>>>>>");
+        	}
             String l1_provider_class = props.getProperty("cache.L1.provider_class");
-            
             if(l1_provider_class != null){
 	            CacheManager.l1_provider = getProviderInstance(l1_provider_class);
 	            CacheManager.l1_provider.start(getProviderProperties(props, CacheManager.l1_provider));

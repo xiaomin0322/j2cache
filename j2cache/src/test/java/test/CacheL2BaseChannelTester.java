@@ -1,3 +1,4 @@
+package test;
 /**
  *
  */
@@ -18,8 +19,11 @@ import net.oschina.j2cache.factory.CacheFactory;
 public class CacheL2BaseChannelTester {
 
     public static void main(String[] args) {
-
-        System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
+              test();
+    }
+    
+    public static void test(){
+    	System.setProperty("java.net.preferIPv4Stack", "true"); //Disable IPv6 in JVM
 
         //ICacheChannel cache = CacheFactory.getCacheL1JgroupsAndL2Redis();
         ICacheChannel cache = CacheFactory.getCacheL1ReidsAndL2Redis();
