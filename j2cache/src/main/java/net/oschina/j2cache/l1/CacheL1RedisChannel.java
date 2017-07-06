@@ -5,6 +5,7 @@ import net.oschina.j2cache.CacheManager;
 import net.oschina.j2cache.CacheOprator;
 import net.oschina.j2cache.Command;
 import net.oschina.j2cache.redis.RedisCacheProvider;
+import net.oschina.j2cache.redis.RedisClusterCacheProvider;
 import net.oschina.j2cache.util.CacheUtils;
 import net.oschina.j2cache.util.SerializationUtils;
 import net.oschina.j2cache.util.SpringProperty;
@@ -61,11 +62,14 @@ public class CacheL1RedisChannel extends CacheL1BaseChannel {
             	if(StringUtils.isEmpty(key)){
             		continue;
             	}
+            	String l2_provider_class = CacheManager.getProperties().getProperty("cache.L2.provider_class");
             	 new Thread(){
                  	public void run() {
-                 		 Jedis cache = RedisCacheProvider.getResource();
-                 		 cache.subscribe(new  RedisMQBinaryHandler(), getChannelNameByte(key));
-                 		 RedisCacheProvider.returnResource(cache, false);
+                 		if("redis".equalsIgnoreCase(l2_provider_class)){
+                 			RedisCacheProvider.getResource().subscribe(new  RedisMQBinaryHandler(), getChannelNameByte(key));
+                 		}else{
+                 			RedisClusterCacheProvider.getResource().subscribe(new  RedisMQBinaryHandler(), getChannelNameByte(key));
+                 		}
                  	}
                  }.start();
             }

@@ -1,17 +1,18 @@
 package net.oschina.j2cache;
 
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Properties;
+
 import net.oschina.j2cache.ehcache.EhCacheProvider;
 import net.oschina.j2cache.redis.RedisCacheProvider;
+import net.oschina.j2cache.redis.RedisClusterCacheProvider;
 import net.oschina.j2cache.util.ConfigUtils;
 import net.oschina.j2cache.util.SpringProperty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * 缓存管理器
@@ -34,6 +35,10 @@ public class CacheManager {
     
     public static Properties getProperties(){
     	return props;
+    }
+    
+    public static CacheProvider getCacheProviderL2(){
+    	return l2_provider;
     }
 
     public static void initCacheProvider(CacheExpiredListener listener) {
@@ -79,6 +84,8 @@ public class CacheManager {
             return new EhCacheProvider();
         if ("redis".equalsIgnoreCase(value))
             return new RedisCacheProvider();
+        if ("redisCluster".equalsIgnoreCase(value))
+        	return new RedisClusterCacheProvider();
         if ("none".equalsIgnoreCase(value))
             return new NullCacheProvider();
         return (CacheProvider) Class.forName(value).newInstance();
@@ -124,7 +131,7 @@ public class CacheManager {
         }
         return null;
     }
-
+    
     /**
      * 获取缓存中的数据
      *
