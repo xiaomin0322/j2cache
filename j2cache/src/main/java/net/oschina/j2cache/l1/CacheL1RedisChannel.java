@@ -7,9 +7,11 @@ import net.oschina.j2cache.Command;
 import net.oschina.j2cache.redis.RedisCacheProvider;
 import net.oschina.j2cache.util.CacheUtils;
 import net.oschina.j2cache.util.SerializationUtils;
+import net.oschina.j2cache.util.SpringProperty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
@@ -25,11 +27,8 @@ public class CacheL1RedisChannel extends CacheL1BaseChannel {
 
     private String name;
     
-    public String channel = "CacheL1RedisChannel";
-    
-    public byte[] channelByte = null;
-
     private final static CacheL1RedisChannel instance = new CacheL1RedisChannel("default");
+    
     
     /**
      * 单例方法
@@ -49,17 +48,28 @@ public class CacheL1RedisChannel extends CacheL1BaseChannel {
     private CacheL1RedisChannel(String name) throws CacheException {
         this.name = name;
         try {
-        	channelByte =  SerializationUtils.serialize(channel);
-            CacheManager.initCacheProvider(this);
-            long ct = System.currentTimeMillis();
-            new Thread(){
-            	public void run() {
-            		 Jedis cache = RedisCacheProvider.getResource();
-            		 cache.subscribe(new  RedisMQBinaryHandler(), channelByte);
-            		 RedisCacheProvider.returnResource(cache, false);
+        	 long ct = System.currentTimeMillis();
+        	 
+             CacheManager.initCacheProvider(this);
+           
+            String channelStr = SpringProperty.getProperty("");
+            if(StringUtils.isEmpty(channelStr)){
+            	channelStr = CacheManager.getProperties().getProperty("");
+            }
+            log.info("redis subscribe : {}",channelStr);
+            for(final String key:channelStr.split(",")){
+            	if(StringUtils.isEmpty(key)){
+            		continue;
             	}
-            }.start();
-            log.info("Connected to channel:" + this.name + ", time " + (System.currentTimeMillis() - ct) + " ms.");
+            	 new Thread(){
+                 	public void run() {
+                 		 Jedis cache = RedisCacheProvider.getResource();
+                 		 cache.subscribe(new  RedisMQBinaryHandler(), getChannelNameByte(key));
+                 		 RedisCacheProvider.returnResource(cache, false);
+                 	}
+                 }.start();
+            }
+           log.info("CacheL1RedisChannel init :" + this.name + ", time " + (System.currentTimeMillis() - ct) + " ms.");
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -71,7 +81,7 @@ public class CacheL1RedisChannel extends CacheL1BaseChannel {
         try {
         	// 发送广播
             Command cmd = new Command(CacheOprator.REMOVE_ALL, region, "");
-        	cache.publish(channelByte, SerializationUtils.serialize(cmd));
+        	cache.publish(getChannelNameByte(region), SerializationUtils.serialize(cmd));
         } catch (Exception e) {
             log.error("Unable to clear cache,region=" + region, e);
         }finally{
@@ -90,7 +100,7 @@ public class CacheL1RedisChannel extends CacheL1BaseChannel {
         try {
              //发送广播
              Command cmd = new Command(CacheOprator.SET, region, key,val);
-        	 cache.publish(channelByte, SerializationUtils.serialize(cmd));
+        	 cache.publish(getChannelNameByte(region), SerializationUtils.serialize(cmd));
         } catch (Exception e) {
             log.error("Unable to delete cache,region=" + region + ",key=" + key, e);
         }finally{
@@ -109,7 +119,7 @@ public class CacheL1RedisChannel extends CacheL1BaseChannel {
         try {
              //发送广播
              Command cmd = new Command(CacheOprator.REMOVE, region, key);
-        	 cache.publish(channelByte, SerializationUtils.serialize(cmd));
+        	 cache.publish(getChannelNameByte(region), SerializationUtils.serialize(cmd));
         } catch (Exception e) {
             log.error("Unable to delete cache,region=" + region + ",key=" + key, e);
         }finally{

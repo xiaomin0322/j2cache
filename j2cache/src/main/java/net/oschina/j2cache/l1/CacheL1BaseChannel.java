@@ -1,5 +1,6 @@
 package net.oschina.j2cache.l1;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -7,6 +8,7 @@ import net.oschina.j2cache.CacheException;
 import net.oschina.j2cache.CacheManager;
 import net.oschina.j2cache.CacheObject;
 import net.oschina.j2cache.ICacheChannel;
+import net.oschina.j2cache.util.SerializationUtils;
 
 import org.jgroups.Address;
 import org.jgroups.View;
@@ -25,7 +27,18 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     public final static byte LEVEL_1 = 1;
     public final static String NULL = "NULL";
     
-   
+    public static String getChannelName(String name){
+    	return "cache_"+name;
+    }
+    
+    public static byte[] getChannelNameByte(String name){
+    	try {
+			return SerializationUtils.serialize(getChannelName(name));
+		} catch (IOException e) {
+			 log.error("SerializationUtils.serialize IOException", e);
+		}
+    	return null;
+    }
     /**
      * 获取缓存中的数据
      *
@@ -57,7 +70,8 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     public CacheObject get(String region, Object key,Callable<?> callable){
     	CacheObject cacheObject = get(region, key);
     	if(cacheObject.getValue() == null){
-    		String lockStr = (region+"_"+key).intern();
+    		//String lockStr = (region+"_"+key).intern();
+    		String lockStr = region.intern();
     		try {
     			//处理热点key，缓存雪崩
     			synchronized (lockStr) {

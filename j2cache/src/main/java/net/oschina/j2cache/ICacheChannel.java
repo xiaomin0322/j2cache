@@ -14,7 +14,7 @@ public interface ICacheChannel extends CacheExpiredListener{
     /**
      * 获取缓存中的数据
      *
-     * @param region
+     * @param region 既是region又是队列id,清除集群缓存通过region清除
      * @param key
      * @return
      */
@@ -23,7 +23,7 @@ public interface ICacheChannel extends CacheExpiredListener{
     /**
      * 获取缓存中的数据
      *
-     * @param region
+     * @param region 既是region又是队列id,清除集群缓存通过region清除 既是region又是队列id,清除集群缓存通过region清除
      * @param key
      * @param callable
      * @return
@@ -34,7 +34,7 @@ public interface ICacheChannel extends CacheExpiredListener{
     /**
      * 写入缓存
      *
-     * @param region
+     * @param region 既是region又是队列id,清除集群缓存通过region清除
      * @param key
      * @param value
      */
@@ -43,7 +43,7 @@ public interface ICacheChannel extends CacheExpiredListener{
     /**
      * 写入缓存
      *
-     * @param region
+     * @param region 既是region又是队列id,清除集群缓存通过region清除
      * @param key
      * @param value
      */
@@ -52,7 +52,7 @@ public interface ICacheChannel extends CacheExpiredListener{
     /**
      * 删除缓存
      *
-     * @param region
+     * @param region 既是region又是队列id,清除集群缓存通过region清除
      * @param key
      */
     public void evict(String region, Object key);
@@ -60,7 +60,7 @@ public interface ICacheChannel extends CacheExpiredListener{
     /**
      * 批量删除缓存
      *
-     * @param region
+     * @param region 既是region又是队列id,清除集群缓存通过region清除
      * @param keys
      */
     public void batchEvict(String region, List keys);
@@ -84,7 +84,7 @@ public interface ICacheChannel extends CacheExpiredListener{
     /**
      * 发送清除缓存的广播命令
      *
-     * @param region
+     * @param region 既是region又是队列id,清除集群缓存通过region清除
      * @param key
      */
     public void _sendEvictCmd(String region, Object key);
@@ -92,7 +92,7 @@ public interface ICacheChannel extends CacheExpiredListener{
     /**
      * 删除一级缓存的键对应内容
      *
-     * @param region
+     * @param region 既是region又是队列id,清除集群缓存通过region清除
      * @param key
      */
     public void onDeleteCacheKey(String region, Object key);
