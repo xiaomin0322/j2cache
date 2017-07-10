@@ -44,7 +44,7 @@ public class CurrentLimitUtilsTest {
 												 
 												//load db 查询数据库
 												String rs = "call"+j;
-												System.out.println("==================================="+rs);
+												System.out.println("=======查询数据库结果为============================"+rs);
 												Thread.sleep(2000);
 											
 												 //加入缓存
