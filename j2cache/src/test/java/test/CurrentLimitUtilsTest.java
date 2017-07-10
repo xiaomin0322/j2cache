@@ -28,31 +28,39 @@ public class CurrentLimitUtilsTest {
 					final int j = i;
 					new Thread() {
 						public void run() {
-							String key = "zhangsan";
-							String user = null;
+							String key = "zhangsan"+j;
+							String rs = null;
 							 if (cache.get(key) != null)
-				                   user = (String) cache.get(key).getObjectValue();
-							if(StringUtils.isEmpty(user)){
+								 rs = (String) cache.get(key).getObjectValue();
+							if(StringUtils.isEmpty(rs)){
 								//通过信号量防止缓存失效db雪崩
-								String obj = CurrentLimitUtils.get("user",
+								 rs = CurrentLimitUtils.get("user",
 										new Callable<String>() {
 											@Override
 											public String call() throws Exception {
+												//再次查询缓存
+												 if (cache.get(key) != null)
+									                  return (String) cache.get(key).getObjectValue();
+												 
+												//load db 查询数据库
+												String rs = "call"+j;
+												System.out.println("==================================="+rs);
 												Thread.sleep(2000);
-												return "call"+j;
+											
+												 //加入缓存
+												 Element element = new Element(key, rs);
+										         cache.put(element);
+										         //如果为空设置过期时间防止缓存穿透
+												if(StringUtils.isEmpty(rs)){
+													 element.setTimeToLive(60);
+								                     element.setTimeToIdle(60);
+												}
+												
+												return rs;
 											}
 										},2);
-								 //加入缓存
-								 Element element = new Element(key, obj);
-						         cache.put(element);
-						         user = obj;
-						         //如果为空设置过期时间防止缓存穿透
-								if(StringUtils.isEmpty(obj)){
-									 element.setTimeToLive(60);
-				                     element.setTimeToIdle(60);
-								}
+								
 							}
-							 System.out.println("==================================="+user);
 						};
 					}.start();
 				}
