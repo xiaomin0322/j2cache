@@ -14,7 +14,7 @@ public class CurrentLimitUtilsTest {
 
 	public static void main(String[] args)throws Exception {
 		// TODO Auto-generated method stub
-		test2();
+		test1();
 	}
 	
 	
@@ -29,7 +29,9 @@ public class CurrentLimitUtilsTest {
 					new Thread() {
 						public void run() {
 							String key = "zhangsan";
-							String user = (String) cache.get(key).getObjectKey();
+							String user = null;
+							 if (cache.get(key) != null)
+				                   user = (String) cache.get(key).getObjectValue();
 							if(StringUtils.isEmpty(user)){
 								//通过信号量防止缓存失效db雪崩
 								String obj = CurrentLimitUtils.get("user",
@@ -40,15 +42,17 @@ public class CurrentLimitUtilsTest {
 												return "call"+j;
 											}
 										},2);
-								System.out.println("==================================="+obj);
+								 //加入缓存
 								 Element element = new Element(key, obj);
-						          cache.put(element);
+						         cache.put(element);
+						         user = obj;
 						         //如果为空设置过期时间防止缓存穿透
 								if(StringUtils.isEmpty(obj)){
 									 element.setTimeToLive(60);
 				                     element.setTimeToIdle(60);
 								}
 							}
+							 System.out.println("==================================="+user);
 						};
 					}.start();
 				}
