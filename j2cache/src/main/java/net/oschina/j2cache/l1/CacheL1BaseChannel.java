@@ -29,7 +29,8 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     
 	private static final ConcurrentHashMap<String,Semaphore> SEMAPHORE_MAP = new ConcurrentHashMap<String, Semaphore>();
 
-    public final static byte LEVEL_1 = 1;
+    public final static byte LEVEL_1 = 1;//一级缓存
+    public final static byte LEVEL_3 = 3;//call操作
     public final static String NULL = "NULL";
     
     public static String getChannelName(String name){
@@ -77,8 +78,11 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     	if(cacheObject.getValue() == null){
     		//获取线程许可数
     		int permits =Integer.parseInt(CacheManager.getProperties().getProperty("cache.L1.provider_permits", "5"));
+    		log.info("permits {} ",permits);
     		//获取锁的最大等待时间
     		long permitsAcquireTimeOut = Integer.parseInt(CacheManager.getProperties().getProperty("cache.L1.provider_permitsAcquireTimeOut", "0"));;
+    		log.info("permitsAcquireTimeOut {} ",permitsAcquireTimeOut);
+    		
     		
     		boolean tryAcquireFlag = true;
     		Semaphore semaphore = SEMAPHORE_MAP.get(region);
@@ -92,10 +96,10 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     		try {
     			if(permitsAcquireTimeOut <=0){
 					semaphore.acquire();
-					log.info("semaphore hashCode {} semaphore.acquire {} methodName",semaphore.hashCode(),region);
+					log.info("semaphore hashCode {} semaphore.acquire {} region",semaphore.hashCode(),region);
 				}else{
 					tryAcquireFlag = semaphore.tryAcquire(permitsAcquireTimeOut, TimeUnit.MILLISECONDS);
-					log.info("semaphore hashCode {} semaphore.tryAcquire methodName {}  time:{} SECONDS flag :{}",semaphore.hashCode(),region,permitsAcquireTimeOut,tryAcquireFlag);
+					log.info("semaphore hashCode {} semaphore.tryAcquire region {}  time:{} SECONDS flag :{}",semaphore.hashCode(),region,permitsAcquireTimeOut,tryAcquireFlag);
 				    if(!tryAcquireFlag){
 				    	throw new CacheException("semaphore.tryAcquire false");
 				    }
@@ -114,20 +118,20 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     				Object callObj = callable.call();
     				callObj = callObj == null ? NULL : callObj;
     				cacheObject.setValue(callObj);
+    				cacheObject.setLevel(LEVEL_3);
     				set(region, key, callObj);
     				//处理缓存穿透  额外对空置设置过期时间
     				if(NULL.equals(callObj)){
     					CacheManager.expire(LEVEL_1, region, key, 60);
     					log.info("write data to cache region="+region+",key="+key+",value is null expire 60s");
     				}
-    				
 				//}
 			} catch (Exception e) {
 				throw new CacheException(e);
 			}finally{
 				if(semaphore!=null && tryAcquireFlag){
 					semaphore.release();
-					log.info("semaphore.release {} methodName",region);
+					log.info("semaphore.release {} region",region);
 				}
 			}
     	}

@@ -13,7 +13,7 @@ import net.oschina.j2cache.l1.CacheL1RedisChannel;
 public class CacheL1Test {
 
 	public static void main(String[] args) throws Exception{
-		test2();
+		test1();
 	}
 
 	// 缓存穿透测试
@@ -69,7 +69,12 @@ public class CacheL1Test {
 									return "123";
 								}
 							});
-					System.out.println(obj);
+					System.out.println("cache.get ==="+obj);
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				};
 			}.start();
 		}
