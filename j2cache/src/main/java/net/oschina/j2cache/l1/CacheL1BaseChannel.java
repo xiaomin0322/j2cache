@@ -3,6 +3,9 @@ package net.oschina.j2cache.l1;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import net.oschina.j2cache.CacheException;
 import net.oschina.j2cache.CacheManager;
@@ -23,6 +26,8 @@ import org.slf4j.LoggerFactory;
 public abstract class CacheL1BaseChannel  implements ICacheChannel{
 
     private final static Logger log = LoggerFactory.getLogger(CacheL1BaseChannel.class);
+    
+	private static final ConcurrentHashMap<String,Semaphore> SEMAPHORE_MAP = new ConcurrentHashMap<String, Semaphore>();
 
     public final static byte LEVEL_1 = 1;
     public final static String NULL = "NULL";
@@ -70,11 +75,35 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     public CacheObject get(String region, Object key,Callable<?> callable){
     	CacheObject cacheObject = get(region, key);
     	if(cacheObject.getValue() == null){
-    		//String lockStr = (region+"_"+key).intern();
-    		String lockStr = region.intern();
+    		//获取线程许可数
+    		int permits =Integer.parseInt(CacheManager.getProperties().getProperty("cache.L1.provider_permits", "5"));
+    		//获取锁的最大等待时间
+    		long permitsAcquireTimeOut = Integer.parseInt(CacheManager.getProperties().getProperty("cache.L1.provider_permitsAcquireTimeOut", "0"));;
+    		
+    		boolean tryAcquireFlag = true;
+    		Semaphore semaphore = SEMAPHORE_MAP.get(region);
+		    if (semaphore == null) {  
+		    	semaphore = new Semaphore(permits,true); 
+		    	Semaphore l = SEMAPHORE_MAP.putIfAbsent(region, semaphore);  
+		        if (l != null) {  
+		        	semaphore = l;  
+		        }  
+		    }  
     		try {
+    			if(permitsAcquireTimeOut <=0){
+					semaphore.acquire();
+					log.info("semaphore hashCode {} semaphore.acquire {} methodName",semaphore.hashCode(),region);
+				}else{
+					tryAcquireFlag = semaphore.tryAcquire(permitsAcquireTimeOut, TimeUnit.MILLISECONDS);
+					log.info("semaphore hashCode {} semaphore.tryAcquire methodName {}  time:{} SECONDS flag :{}",semaphore.hashCode(),region,permitsAcquireTimeOut,tryAcquireFlag);
+				    if(!tryAcquireFlag){
+				    	throw new CacheException("semaphore.tryAcquire false");
+				    }
+				}
+    			
     			//处理热点key，缓存雪崩
-    			synchronized (lockStr) {
+    			//String lockStr = region.intern();
+    			//synchronized (lockStr) {
     				//再次检测
     				cacheObject = get(region, key);
     				if(cacheObject.getValue() != null){
@@ -92,9 +121,14 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     					log.info("write data to cache region="+region+",key="+key+",value is null expire 60s");
     				}
     				
-				}
+				//}
 			} catch (Exception e) {
 				throw new CacheException(e);
+			}finally{
+				if(semaphore!=null && tryAcquireFlag){
+					semaphore.release();
+					log.info("semaphore.release {} methodName",region);
+				}
 			}
     	}
     	return cacheObject;
