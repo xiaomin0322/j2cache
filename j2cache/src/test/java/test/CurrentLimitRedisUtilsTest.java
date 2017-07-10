@@ -20,7 +20,7 @@ public class CurrentLimitRedisUtilsTest {
 					new Thread() {
 						public void run() {
 							String key = "zhangsan"+j;
-							CurrentLimitRedisUtils.get("locakName", key, new Callable<String>() {
+							String rsCall = CurrentLimitRedisUtils.get("locakName", key, new Callable<String>() {
 								public String call() throws Exception {
 									String rs = "查询结果为："+j;
 									System.out.println("查询数据库结果为："+rs);
@@ -28,7 +28,7 @@ public class CurrentLimitRedisUtilsTest {
 									return rs;
 								};
 							}, 2);
-							
+							System.out.println(" CurrentLimitRedisUtils.get key =="+key +" ===="+rsCall);
 						};
 					}.start();
 				}
