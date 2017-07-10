@@ -122,7 +122,8 @@ public abstract class CacheL1BaseChannel  implements ICacheChannel{
     				set(region, key, callObj);
     				//处理缓存穿透  额外对空置设置过期时间
     				if(NULL.equals(callObj)){
-    					CacheManager.expire(LEVEL_1, region, key, 60);
+    					int expire = Integer.valueOf(CacheManager.getProperties().getProperty("cache.L1.provider_penetration_expire","60"));
+    					CacheManager.expire(LEVEL_1, region, key, expire);
     					log.info("write data to cache region="+region+",key="+key+",value is null expire 60s");
     				}
 				//}
