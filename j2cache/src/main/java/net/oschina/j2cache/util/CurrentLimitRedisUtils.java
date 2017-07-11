@@ -94,7 +94,11 @@ public class CurrentLimitRedisUtils {
 			bytes = RedisClusterCacheProvider.getResource().get(cacheKeyBytes);
 			object = SerializationUtils.deserialize(bytes);
 			if(object !=null){
-				return (T) object;
+				if(DEF_REDIS_VAL.equals(object)){
+					return null;
+				}else{
+					return (T) object;
+				}
 			}
 			//查询数据库
 			object = callable.call();
