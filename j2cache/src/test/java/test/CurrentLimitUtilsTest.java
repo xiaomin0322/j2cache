@@ -58,7 +58,7 @@ public class CurrentLimitUtilsTest {
 												
 												return rs;
 											}
-										},2);
+										},2,0,2);
 								
 							}
 						};
