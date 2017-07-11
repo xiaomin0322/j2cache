@@ -1,6 +1,8 @@
 package net.oschina.j2cache.util;
 
+import net.oschina.j2cache.CacheObject;
 import net.oschina.j2cache.Command;
+import net.oschina.j2cache.l1.CacheL1BaseChannel;
 import net.oschina.j2cache.l1.CacheL1RedisChannel;
 
 import org.slf4j.Logger;
@@ -36,6 +38,17 @@ public class CacheUtils {
 		            log.error("Unable to handle received msg", e);
 		       } 
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T getVal(CacheObject cacheObject){
+		if(cacheObject == null){
+			return null;
+		}
+		if(cacheObject.getValue() == null || CacheL1BaseChannel.NULL.equals(cacheObject.getValue())){
+			return null;
+		}
+		return (T) cacheObject.getValue();
 	}
 
 }
