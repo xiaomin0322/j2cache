@@ -23,6 +23,9 @@ public class CurrentLimitRedisUtils {
 			.getLogger(CurrentLimitRedisUtils.class);
 
 	private static final ConcurrentHashMap<String, Semaphore> SEMAPHORE_MAP = new ConcurrentHashMap<String, Semaphore>();
+	
+	
+	public static final String DEF_REDIS_VAL = "NULL";
 
 	
 	public static <T> T get(String lockName,String cacheKey,Callable<T> callable,int permits) {
@@ -54,7 +57,11 @@ public class CurrentLimitRedisUtils {
 		}
 		
 		if(object !=null){
-			return (T) object;
+			if(DEF_REDIS_VAL.equals(object)){
+				return null;
+			}else{
+				return (T) object;
+			}
 		}
 		
 		
@@ -92,11 +99,14 @@ public class CurrentLimitRedisUtils {
 			//查询数据库
 			object = callable.call();
 			
+			object = object == null ? DEF_REDIS_VAL : object;
+			
 			//加入缓存
 			RedisClusterCacheProvider.getResource().set(cacheKeyBytes, SerializationUtils.serialize(object));
 			//callable为null则，缓存空结果，防止缓存穿透
-			if(object == null){
+			if(DEF_REDIS_VAL.equals(object)){
 				RedisClusterCacheProvider.getResource().expire(cacheKeyBytes, 60);
+				object = null;
 			}
 			return (T) object;
 		} catch (Exception e) {
